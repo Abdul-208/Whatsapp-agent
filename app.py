@@ -14,8 +14,6 @@ AGENT_ON = os.environ.get("AGENT_ON", "false")
 
 client = Client(TWILIO_SID, TWILIO_TOKEN)
 
-IMPORTANT_KEYWORDS = ["urgent", "emergency", "zaruri", "hospital", "accident", "important", "jaldi", "help"]
-
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp():
     if AGENT_ON != "true":
@@ -41,7 +39,7 @@ def whatsapp():
         client.messages.create(
             from_="whatsapp:+14155238886",
             to=MY_NUMBER,
-            body=f"🚨 Zaruri Message!\n📞 From: {caller}\n💬 Message: {incoming}\n🤖 AI: {ai_reply}"
+            body=f"Zaruri Message! From: {caller} Message: {incoming} AI: {ai_reply}"
         )
     resp = MessagingResponse()
     resp.message(ai_reply)
