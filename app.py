@@ -28,7 +28,7 @@ def whatsapp():
                 "Content-Type": "application/json"
             },
             json={
-                "model": "mistralai/mistral-7b-instruct:free",
+                "model": "google/gemma-3-4b-it:free",
                 "messages": [
                     {"role": "system", "content": "Tum Abdul ke WhatsApp assistant ho. Urdu mein short jawab do 2 sentences mein."},
                     {"role": "user", "content": incoming}
