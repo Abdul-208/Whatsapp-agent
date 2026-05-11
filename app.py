@@ -20,27 +20,26 @@ def whatsapp():
         return Response("", mimetype="text/xml")
     incoming = request.form.get("Body", "")
     caller = request.form.get("From", "Unknown")
-    r = requests.post(
-        "https://openrouter.ai/api/v1/chat/completions",
-        headers={"Authorization": f"Bearer {OPENROUTER_KEY}"},
-        json={
-            "model": "mistralai/mistral-7b-instruct:free",
-            "messages": [
-                {"role": "system", "content": "Tum Abdul ke WhatsApp assistant ho. Urdu mein short jawab do. Agar message zaruri lage to jawab ke end mein [IMPORTANT: YES] likho, warna [IMPORTANT: NO]"},
-                {"role": "user", "content": incoming}
-            ]
-        }
-    )
-    result = r.json()
-    full_response = result["choices"][0]["message"]["content"]
-    is_important = "IMPORTANT: YES" in full_response
-    ai_reply = full_response.replace("[IMPORTANT: YES]", "").replace("[IMPORTANT: NO]", "").strip()
-    if is_important:
-        client.messages.create(
-            from_="whatsapp:+14155238886",
-            to=MY_NUMBER,
-            body=f"Zaruri Message! From: {caller} Message: {incoming} AI: {ai_reply}"
+    try:
+        r = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "mistralai/mistral-7b-instruct:free",
+                "messages": [
+                    {"role": "system", "content": "Tum Abdul ke WhatsApp assistant ho. Urdu mein short jawab do 2 sentences mein."},
+                    {"role": "user", "content": incoming}
+                ]
+            },
+            timeout=10
         )
+        result = r.json()
+        ai_reply = result["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        ai_reply = "Abdul abhi available nahi hain, baad mein try karein."
     resp = MessagingResponse()
     resp.message(ai_reply)
     return Response(str(resp), mimetype="text/xml")
